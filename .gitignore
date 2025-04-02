@@ -1,0 +1,16 @@
+# MSVC Windows builds of rustc generate these, which store debugging information
+*.pdb
+
+# Python tmp files
+__pycache__
+
+# IDE
+.idea
+.vscode
+
+# Virtual environments
+.venv
+
+# Caches
+.mypy_cache
+.ruff_cache

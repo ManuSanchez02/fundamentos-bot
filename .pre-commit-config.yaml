@@ -1,0 +1,28 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff-check
+        description: "Run 'ruff check' to check for code style and errors"
+        entry: uv run ruff check --force-exclude
+        language: python
+        types_or: [python, pyi, jupyter]
+        require_serial: true
+        args: [--fix]
+
+      - id: ruff-format
+        name: ruff-format
+        description: "Run 'ruff format' to format code"
+        entry: uv run ruff format --force-exclude
+        language: python
+        types_or: [python, pyi, jupyter]
+        require_serial: true
+
+      - id: mypy
+        name: mypy
+        description: "Run 'mypy' to check for type errors"
+        entry: uv run mypy
+        language: python
+        "types_or": [python, pyi, jupyter]
+        args: ["--ignore-missing-imports", "--scripts-are-modules"]
+        require_serial: true
