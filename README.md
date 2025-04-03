@@ -12,7 +12,10 @@ Once you have `uv` installed, you can run the bot using the following command to
 uv sync
 ```
 
+**Note**: You should set the interpreter of your IDE to the one you are using in your virtual environment. In VSCode, you can do this by pressing `Ctrl + Shift + P` to open the command palette and selecting `Python: Select Interpreter`. Then, select the interpreter that corresponds to your virtual environment.
+
 ### Pre-commit hook
+
 To install the pre-commit hook, run the following command:
 
 ```bash

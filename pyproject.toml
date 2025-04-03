@@ -7,7 +7,10 @@ authors = [
     { name = "Manuel Sanchez", email = "manuelsfdelavega@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "discord-py>=2.5.2",
+    "python-dotenv>=1.1.0",
+]
 
 [project.scripts]
 bot = "algo1_bot:main"
