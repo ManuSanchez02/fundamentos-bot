@@ -5,6 +5,8 @@ from algo1_bot.commands.general import General
 
 import logging
 
+from algo1_bot.commands.spreadsheet import Spreadsheet
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,6 +19,7 @@ class MyBot(commands.Bot):
     async def setup_hook(self):
         """Load all Cogs (commands) on startup"""
         await self.add_cog(General(self))
+        await self.add_cog(Spreadsheet(self))
         await self.tree.sync()
         logger.info("Slash commands synced!")
 
