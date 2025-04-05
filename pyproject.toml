@@ -6,9 +6,10 @@ readme = "README.md"
 authors = [
     { name = "Manuel Sanchez", email = "manuelsfdelavega@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "discord-py>=2.5.2",
+    "pyjwt[crypto]>=2.10.1",
     "python-dotenv>=1.1.0",
 ]
 
