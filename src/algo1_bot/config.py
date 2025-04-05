@@ -9,6 +9,7 @@ class Config:
     """Configuration class for the bot."""
 
     token: str
+    spreadsheet_id: str
     log_level: str | int = logging.INFO
 
 
@@ -26,10 +27,12 @@ def load_config() -> Config:
 
     token = _getenv_or_raise("DISCORD_TOKEN")
     log_level = os.getenv("LOG_LEVEL", logging.INFO)
+    spreadsheet_id = _getenv_or_raise("SPREADSHEET_ID")
 
     config = Config(
         token=token,
         log_level=log_level,
+        spreadsheet_id=spreadsheet_id,
     )
 
     return config
