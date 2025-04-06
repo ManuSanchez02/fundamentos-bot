@@ -1,4 +1,4 @@
-import discord
+from discord import Intents, Object
 from discord.ext import commands
 
 from algo1_bot.commands.general import General
@@ -15,14 +15,14 @@ logger = logging.getLogger(__name__)
 
 class MyBot(commands.Bot):
     def __init__(self, config: Config):
-        super().__init__(command_prefix=BOT_PREFIX, intents=discord.Intents.default())
+        super().__init__(command_prefix=BOT_PREFIX, intents=Intents.default())
         self.config = config
 
     async def setup_hook(self):
         """Load all Cogs (commands) on startup"""
         guild = None
         if self.config.guild_id:
-            guild = discord.Object(id=self.config.guild_id)
+            guild = Object(id=self.config.guild_id)
             logger.info(f"Guild ID: {self.config.guild_id}")
         await self.add_cog(General(self))
         await self.add_cog(Spreadsheet(self, self.config.spreadsheet_id))
