@@ -111,5 +111,5 @@ class Spreadsheet(BaseCog):
             f"Successfully updated email for {padron} from {email_actual} to {nuevo_email}"
         )
         await interaction.followup.send(
-            f"Se actualizó el email de {padron} a {nuevo_email}"
+            f"Se actualizó el email del alumno con padrón {padron} a {nuevo_email}"
         )
