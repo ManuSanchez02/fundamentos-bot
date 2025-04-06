@@ -72,10 +72,11 @@ This will start the bot and it will connect to your Discord server. You should s
 ### Running with Docker
 
 If you prefer to run the bot using Docker, you can do so by using the provided `docker-compose.yml` file. This file contains the configuration for running the bot in a Docker container.
+
 To run the bot using Docker, you need to have Docker installed and running on your machine. Once you have Docker installed, you can run the following command in the root directory of the project:
 
 ```bash
-docker compose up
+./run_docker.sh
 ```
 
 This will build the Docker image and start the bot in a container. You should see a message in the console indicating that the bot is online.
