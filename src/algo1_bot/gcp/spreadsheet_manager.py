@@ -93,7 +93,7 @@ async def _update_data(
     }
     body = {
         "range": target_range,
-        "majorDimension": "ROWS" if len(values) < len(values[0]) else "COLUMNS",
+        "majorDimension": "ROWS" if len(values) <= len(values[0]) else "COLUMNS",
         "values": values,
     }
     async with aiohttp.ClientSession() as session:
