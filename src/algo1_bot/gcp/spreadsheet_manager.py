@@ -49,7 +49,7 @@ class _RawSpreadsheetData(_BaseSpreadsheetData):
 
 
 @dataclass
-class ParsedSpreadsheetData(_BaseSpreadsheetData, Generic[T]):
+class SpreadsheetData(_BaseSpreadsheetData, Generic[T]):
     values: list[T]
 
 
@@ -83,7 +83,7 @@ class SpreadsheetManager:
         self.token_manager = token_manager
         self.spreadsheet_id = spreadsheet_id
 
-    async def get_data(self, range: str, schema: Type[T]) -> ParsedSpreadsheetData[T]:
+    async def get_data(self, range: str, schema: Type[T]) -> SpreadsheetData[T]:
         logger.debug(
             f"Fetching data from range: {range} in spreadsheet: {self.spreadsheet_id}"
         )
@@ -91,7 +91,7 @@ class SpreadsheetManager:
         data = await _fetch_data(token, self.spreadsheet_id, range)
         values = [schema.from_row(row) for row in data.values]
 
-        return ParsedSpreadsheetData(
+        return SpreadsheetData(
             range=data.range,
             major_dimension=data.major_dimension,
             values=values,
