@@ -10,6 +10,8 @@ import aiohttp
 import logging
 from abc import ABC
 
+from pydantic import BaseModel
+
 from algo1_bot.gcp.token_manager import TokenManager
 
 SPREADSHEETS_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets"
@@ -22,7 +24,7 @@ GCP_CREDENTIALS_FILENAME = "gcp_credentials.json"
 logger = logging.getLogger(__name__)
 
 
-class Schema(ABC):
+class Schema(ABC, BaseModel):
     @classmethod
     def from_row(cls, row: list[str]) -> Self:
         """
