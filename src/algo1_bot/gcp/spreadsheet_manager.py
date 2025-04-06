@@ -20,6 +20,7 @@ SCOPE = "https://www.googleapis.com/auth/spreadsheets"
 ACCESS_TOKEN_DURATION = 60 * 60  # 1 hour
 JWT_ENCRYPTION_ALGORITHM = "RS256"
 GCP_CREDENTIALS_FILENAME = "gcp_credentials.json"
+VALUE_INPUT_OPTION = "USER_ENTERED"
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +54,7 @@ class SpreadsheetData(_BaseSpreadsheetData, Generic[T]):
     values: list[T]
 
 
-async def _fetch_data(
-    token: str, spreadsheet_id: str, range: str
-) -> _RawSpreadsheetData:
+async def _get_data(token: str, spreadsheet_id: str, range: str) -> _RawSpreadsheetData:
     url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{range}"
 
     headers = {"Authorization": f"Bearer {token}"}
@@ -63,7 +62,7 @@ async def _fetch_data(
         async with session.get(url, headers=headers) as response:
             response.raise_for_status()
             response_data = await response.json()
-            logger.debug(f"Successfully fetched data: {response_data}")
+            logger.debug(f"Successfully got data: {response_data}")
 
     try:
         return _RawSpreadsheetData(
@@ -72,10 +71,34 @@ async def _fetch_data(
             values=response_data["values"],
         )
     except KeyError as e:
-        logger.error(f"Invalid fetch data response: {response_data}")
+        logger.error(f"Invalid get data response: {response_data}")
         raise KeyError(
             f"Missing key in response data: {e}. Please check the API response."
         )
+
+
+async def _update_data(
+    token: str, spreadsheet_id: str, range: str, values: list[list[str]]
+) -> None:
+    if len(values) == 0:
+        logger.warning("No values provided for update.")
+        return
+
+    url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{range}?valueInputOption={VALUE_INPUT_OPTION}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+    body = {
+        "range": range,
+        "majorDimension": "ROWS" if len(values) < len(values[0]) else "COLUMNS",
+        "values": values,
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.put(url, headers=headers, json=body) as response:
+            response.raise_for_status()
+            response_data = await response.json()
+            logger.debug(f"Successfully updated data: {response_data}")
 
 
 class SpreadsheetManager:
@@ -88,7 +111,7 @@ class SpreadsheetManager:
             f"Fetching data from range: {range} in spreadsheet: {self.spreadsheet_id}"
         )
         token = await self.token_manager.get_token()
-        data = await _fetch_data(token, self.spreadsheet_id, range)
+        data = await _get_data(token, self.spreadsheet_id, range)
         values = [schema.from_row(row) for row in data.values]
 
         return SpreadsheetData(
@@ -96,3 +119,10 @@ class SpreadsheetManager:
             major_dimension=data.major_dimension,
             values=values,
         )
+
+    async def update_range(self, range: str, values: list[list[str]]):
+        logger.debug(
+            f"Updating data in range: {range} in spreadsheet: {self.spreadsheet_id}"
+        )
+        token = await self.token_manager.get_token()
+        await _update_data(token, self.spreadsheet_id, range, values)
