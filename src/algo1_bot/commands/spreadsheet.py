@@ -61,8 +61,10 @@ class Spreadsheet(BaseCog):
 
         logger.info(f"Received email change request for {padron} to {nuevo_email}")
         await interaction.response.defer(thinking=True, ephemeral=True)
-        range = f"{SPREADSHEET_NAME}!{START_COL}{START_ROW}:{END_COL}"
-        data = await self.spreadsheet_manager.get_range(range, schema=StudentSchema)
+        target_range = f"{SPREADSHEET_NAME}!{START_COL}{START_ROW}:{END_COL}"
+        data = await self.spreadsheet_manager.get_range(
+            target_range, schema=StudentSchema
+        )
         students = data.values
         found_index = None
         for i, student in enumerate(students, START_ROW):
@@ -81,7 +83,7 @@ class Spreadsheet(BaseCog):
         cell_to_update = f"{EMAIL_COL}{found_index}:{EMAIL_COL}{found_index}"
         logger.debug(f"Updating cell {cell_to_update} with new email {nuevo_email}")
         await self.spreadsheet_manager.update_range(
-            range=cell_to_update,
+            target_range=cell_to_update,
             values=[[nuevo_email]],
         )
         logger.info(

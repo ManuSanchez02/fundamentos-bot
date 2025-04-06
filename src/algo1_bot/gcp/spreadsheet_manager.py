@@ -40,7 +40,7 @@ T = TypeVar("T", bound=Schema)
 
 @dataclass
 class _BaseSpreadsheetData:
-    range: str
+    target_range: str
     major_dimension: str
 
 
@@ -54,8 +54,10 @@ class SpreadsheetData(_BaseSpreadsheetData, Generic[T]):
     values: list[T]
 
 
-async def _get_data(token: str, spreadsheet_id: str, range: str) -> _RawSpreadsheetData:
-    url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{range}"
+async def _get_data(
+    token: str, spreadsheet_id: str, target_range: str
+) -> _RawSpreadsheetData:
+    url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{target_range}"
 
     headers = {"Authorization": f"Bearer {token}"}
     async with aiohttp.ClientSession() as session:
@@ -66,7 +68,7 @@ async def _get_data(token: str, spreadsheet_id: str, range: str) -> _RawSpreadsh
 
     try:
         return _RawSpreadsheetData(
-            range=response_data["range"],
+            target_range=response_data["range"],
             major_dimension=response_data["majorDimension"],
             values=response_data["values"],
         )
@@ -78,19 +80,19 @@ async def _get_data(token: str, spreadsheet_id: str, range: str) -> _RawSpreadsh
 
 
 async def _update_data(
-    token: str, spreadsheet_id: str, range: str, values: list[list[str]]
+    token: str, spreadsheet_id: str, target_range: str, values: list[list[str]]
 ) -> None:
     if len(values) == 0:
         logger.warning("No values provided for update.")
         return
 
-    url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{range}?valueInputOption={VALUE_INPUT_OPTION}"
+    url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{target_range}?valueInputOption={VALUE_INPUT_OPTION}"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
     }
     body = {
-        "range": range,
+        "range": target_range,
         "majorDimension": "ROWS" if len(values) < len(values[0]) else "COLUMNS",
         "values": values,
     }
@@ -106,23 +108,23 @@ class SpreadsheetManager:
         self.token_manager = token_manager
         self.spreadsheet_id = spreadsheet_id
 
-    async def get_range(self, range: str, schema: Type[T]) -> SpreadsheetData[T]:
+    async def get_range(self, target_range: str, schema: Type[T]) -> SpreadsheetData[T]:
         logger.debug(
-            f"Fetching data from range: {range} in spreadsheet: {self.spreadsheet_id}"
+            f"Fetching data from range: {target_range} in spreadsheet: {self.spreadsheet_id}"
         )
         token = await self.token_manager.get_token()
-        data = await _get_data(token, self.spreadsheet_id, range)
+        data = await _get_data(token, self.spreadsheet_id, target_range)
         values = [schema.from_row(row) for row in data.values]
 
         return SpreadsheetData(
-            range=data.range,
+            target_range=data.target_range,
             major_dimension=data.major_dimension,
             values=values,
         )
 
-    async def update_range(self, range: str, values: list[list[str]]):
+    async def update_range(self, target_range: str, values: list[list[str]]):
         logger.debug(
-            f"Updating data in range: {range} in spreadsheet: {self.spreadsheet_id}"
+            f"Updating data in range: {target_range} in spreadsheet: {self.spreadsheet_id}"
         )
         token = await self.token_manager.get_token()
-        await _update_data(token, self.spreadsheet_id, range, values)
+        await _update_data(token, self.spreadsheet_id, target_range, values)
