@@ -11,15 +11,19 @@ Make sure you follow the instructions below to set up the bot correctly.
 - [uv](https://docs.astral.sh/uv/) - A Python package manager that allows you to create and manage virtual environments. This is a requirement for running the bot locally.
 - [Docker](https://www.docker.com/) - In case you want to run the bot in a container. Check out the [Docker section](#docker) for more information.
 
-### Environment variables
+### Environment variables and GCP credentials
 
 Firstly, you need to clone the `.env.EXAMPLE` file and rename it to `.env`. This file contains the environment variables needed to run the bot. You can find the `.env` file in the root directory of the project. After renaming it, you need to fill in the required values. The following environment variables are required:
 
 ```env
 DISCORD_TOKEN=<your_discord_token>
+SPREADSHEET_ID=<your_spreadsheet_id>
+DISCORD_GUILD_ID=<your_discord_guild_id>
 ```
 
 You can obtain a Discord token in the [Discord Developer Portal](https://discord.com/developers/applications), or asking for the token in Slack!
+
+In order to use the Google Cloud Platform APIs, you will need to set up your credentials. To do so, you can either create a service account in the Google Cloud Console and download the JSON key file, or ask for the credentials through Slack. Once you have the key file, you should rename it to `gcp_credentials.json` and place it in the root directory of the project. The bot will automatically load the credentials from this file when it starts up.
 
 Once you have set up all the required environment variables, you can follow the instructions below to finish get the bot up and running.
 

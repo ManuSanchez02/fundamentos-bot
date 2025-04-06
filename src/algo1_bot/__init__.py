@@ -18,5 +18,5 @@ def setup_logging(log_level: str | int) -> logging.Logger:
 def main():
     config = load_config()
     setup_logging(config.log_level)
-    bot = MyBot()
+    bot = MyBot(config)
     bot.run(config.token)

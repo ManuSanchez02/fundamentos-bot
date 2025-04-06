@@ -17,3 +17,6 @@ __pycache__
 # Caches
 .mypy_cache
 .ruff_cache
+
+# Google Cloud
+gcp_credentials.json
