@@ -2,9 +2,9 @@ from typing import override
 from discord import app_commands, Interaction
 import logging
 
-from algo1_bot.commands.base_cog import BaseCog
-from algo1_bot.gcp import SpreadsheetManager, TokenManager
-from algo1_bot.gcp.spreadsheet_manager import Schema
+from fundamentos_bot.commands.base_cog import BaseCog
+from fundamentos_bot.gcp import SpreadsheetManager, TokenManager
+from fundamentos_bot.gcp.spreadsheet_manager import Schema
 
 SPREADSHEET_NAME = "Alumnos"
 START_ROW = 2

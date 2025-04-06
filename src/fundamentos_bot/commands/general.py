@@ -1,6 +1,6 @@
 from discord import app_commands, Interaction
 
-from algo1_bot.commands.base_cog import BaseCog
+from fundamentos_bot.commands.base_cog import BaseCog
 
 
 class General(BaseCog):

@@ -1,7 +1,7 @@
 [project]
-name = "algo1-bot"
+name = "fundamentos-bot"
 version = "0.1.0"
-description = "Add your description here"
+description = "Bot for the programming fundamentals course at the University of Buenos Aires"
 readme = "README.md"
 authors = [
     { name = "Manuel Sanchez", email = "manuelsfdelavega@gmail.com" }
@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-bot = "algo1_bot:main"
+bot = "fundamentos_bot:main"
 
 [build-system]
 requires = ["hatchling"]

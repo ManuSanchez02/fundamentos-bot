@@ -4,12 +4,12 @@ This module contains the MyBot class, which is a subclass of discord.ext.command
 from discord import Intents, Object
 from discord.ext import commands
 
-from algo1_bot.commands.general import General
+from fundamentos_bot.commands.general import General
 
 import logging
 
-from algo1_bot.commands.spreadsheet import Spreadsheet
-from algo1_bot.config import Config
+from fundamentos_bot.commands.spreadsheet import Spreadsheet
+from fundamentos_bot.config import Config
 
 BOT_PREFIX = "!"
 

@@ -76,39 +76,6 @@ wheels = [
 ]
 
 [[package]]
-name = "algo1-bot"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "discord-py" },
-    { name = "pydantic" },
-    { name = "pyjwt", extra = ["crypto"] },
-    { name = "python-dotenv" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "discord-py", specifier = ">=2.5.2" },
-    { name = "pydantic", specifier = ">=2.11.2" },
-    { name = "pyjwt", extras = ["crypto"], specifier = ">=2.10.1" },
-    { name = "python-dotenv", specifier = ">=1.1.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "mypy", specifier = ">=1.15.0" },
-    { name = "pre-commit", specifier = ">=4.2.0" },
-    { name = "ruff", specifier = ">=0.11.2" },
-]
-
-[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -311,6 +278,39 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ab/42/0595b3dbffc2e82d7fe658c12d5a5bafcd7516c6bf2d1d1feb5387caa9c1/frozenlist-1.5.0-cp313-cp313-win32.whl", hash = "sha256:31a9ac2b38ab9b5a8933b693db4939764ad3f299fcaa931a3e605bc3460e693c", size = 44914 },
     { url = "https://files.pythonhosted.org/packages/17/c4/b7db1206a3fea44bf3b838ca61deb6f74424a8a5db1dd53ecb21da669be6/frozenlist-1.5.0-cp313-cp313-win_amd64.whl", hash = "sha256:11aabdd62b8b9c4b84081a3c246506d1cddd2dd93ff0ad53ede5defec7886b28", size = 51167 },
     { url = "https://files.pythonhosted.org/packages/c6/c8/a5be5b7550c10858fcf9b0ea054baccab474da77d37f1e828ce043a3a5d4/frozenlist-1.5.0-py3-none-any.whl", hash = "sha256:d994863bba198a4a518b467bb971c56e1db3f180a25c6cf7bb1949c267f748c3", size = 11901 },
+]
+
+[[package]]
+name = "fundamentos-bot"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "discord-py" },
+    { name = "pydantic" },
+    { name = "pyjwt", extra = ["crypto"] },
+    { name = "python-dotenv" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "discord-py", specifier = ">=2.5.2" },
+    { name = "pydantic", specifier = ">=2.11.2" },
+    { name = "pyjwt", extras = ["crypto"], specifier = ">=2.10.1" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "mypy", specifier = ">=1.15.0" },
+    { name = "pre-commit", specifier = ">=4.2.0" },
+    { name = "ruff", specifier = ">=0.11.2" },
 ]
 
 [[package]]

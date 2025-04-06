@@ -1,5 +1,5 @@
-from algo1_bot.bot import FundamentosBot
-from algo1_bot.config import load_config
+from fundamentos_bot.bot import FundamentosBot
+from fundamentos_bot.config import load_config
 import logging
 
 

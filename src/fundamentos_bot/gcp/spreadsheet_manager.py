@@ -12,7 +12,7 @@ from abc import ABC
 
 from pydantic import BaseModel
 
-from algo1_bot.gcp.token_manager import TokenManager
+from fundamentos_bot.gcp.token_manager import TokenManager
 
 SPREADSHEETS_BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
