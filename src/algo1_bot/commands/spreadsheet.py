@@ -79,7 +79,12 @@ class Spreadsheet(BaseCog):
             return
 
         cell_to_update = f"{EMAIL_COL}{found_index}:{EMAIL_COL}{found_index}"
-        logger.info(f"Updating cell {cell_to_update} with new email {nuevo_email}")
-        # Update the email in the spreadsheet
-
+        logger.debug(f"Updating cell {cell_to_update} with new email {nuevo_email}")
+        await self.spreadsheet_manager.update_range(
+            range=cell_to_update,
+            values=[[nuevo_email]],
+        )
+        logger.info(
+            f"Successfully updated email for {padron} from {email_actual} to {nuevo_email}"
+        )
         await interaction.followup.send(f"Changed email for {padron} to {nuevo_email}")
