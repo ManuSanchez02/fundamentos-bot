@@ -7,7 +7,7 @@ import asyncio
 from dataclasses import dataclass
 import logging
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import aiohttp
 import json
 
@@ -86,7 +86,7 @@ class TokenManager:
         self._private_key, self._issuer = _load_credentials(credentials_filename)
 
     def _encode_jwt(self) -> str:
-        current_time = int(datetime.now().timestamp())
+        current_time = int(datetime.now(timezone.utc).timestamp())
         return jwt.encode(
             {
                 "iss": self._issuer,
@@ -109,7 +109,7 @@ class TokenManager:
 
         async with self._lock:
             self._token = token_response.access_token
-            self._expires_at = datetime.now() + timedelta(
+            self._expires_at = datetime.now(timezone.utc) + timedelta(
                 seconds=token_response.expires_in
             )
 
@@ -117,7 +117,7 @@ class TokenManager:
         return (
             self._token is None
             or self._expires_at is None
-            or datetime.now() >= self._expires_at
+            or datetime.now(timezone.utc) >= self._expires_at
         )
 
     async def get_token(self) -> str:
