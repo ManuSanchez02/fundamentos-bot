@@ -87,4 +87,6 @@ class Spreadsheet(BaseCog):
         logger.info(
             f"Successfully updated email for {padron} from {email_actual} to {nuevo_email}"
         )
-        await interaction.followup.send(f"Changed email for {padron} to {nuevo_email}")
+        await interaction.followup.send(
+            f"Se actualizó el email de {padron} a {nuevo_email}"
+        )
