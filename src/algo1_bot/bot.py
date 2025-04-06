@@ -26,6 +26,8 @@ class MyBot(commands.Bot):
             logger.info(f"Guild ID: {self.config.guild_id}")
         await self.add_cog(General(self))
         await self.add_cog(Spreadsheet(self, self.config.spreadsheet_id))
+        if guild:
+            self.tree.copy_global_to(guild=guild)
         await self.tree.sync(guild=guild)
         logger.info("Slash commands synced!")
 
