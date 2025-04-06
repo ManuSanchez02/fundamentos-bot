@@ -5,8 +5,10 @@ For more details, see: https://developers.google.com/workspace/sheets/api/refere
 """
 
 from dataclasses import dataclass
+from typing import Self
 import aiohttp
 import logging
+from abc import ABC
 
 from algo1_bot.gcp.token_manager import TokenManager
 
@@ -20,11 +22,30 @@ GCP_CREDENTIALS_FILENAME = "gcp_credentials.json"
 logger = logging.getLogger(__name__)
 
 
+class Schema(ABC):
+    @classmethod
+    def from_row(cls, row: list[str]) -> Self:
+        """
+        Converts a row from the spreadsheet into a dictionary.
+        This method should be overridden in subclasses to provide custom mapping.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")
+
+
 @dataclass
-class SpreadsheetData:
+class BaseSpreadsheetData:
     range: str
     major_dimension: str
+
+
+@dataclass
+class SpreadsheetData(BaseSpreadsheetData):
     values: list[list[str]]
+
+
+@dataclass
+class ParsedSpreadsheetData(BaseSpreadsheetData):
+    values: list[Schema]
 
 
 async def _fetch_data(token: str, spreadsheet_id: str, range: str) -> SpreadsheetData:
@@ -55,9 +76,22 @@ class SpreadsheetManager:
         self.token_manager = token_manager
         self.spreadsheet_id = spreadsheet_id
 
-    async def get_data(self, range: str) -> SpreadsheetData:
+    async def get_data(
+        self, range: str, schema: Schema | None = None
+    ) -> SpreadsheetData | ParsedSpreadsheetData:
         logger.debug(
             f"Fetching data from range: {range} in spreadsheet: {self.spreadsheet_id}"
         )
         token = await self.token_manager.get_token()
-        return await _fetch_data(token, self.spreadsheet_id, range)
+        data = await _fetch_data(token, self.spreadsheet_id, range)
+        values = data.values
+        if not schema or len(values) == 0:
+            return data
+
+        parsed_values = [schema.from_row(row) for row in values]
+
+        return ParsedSpreadsheetData(
+            range=data.range,
+            major_dimension=data.major_dimension,
+            values=parsed_values,
+        )
