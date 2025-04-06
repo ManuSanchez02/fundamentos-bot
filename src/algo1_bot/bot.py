@@ -20,9 +20,13 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         """Load all Cogs (commands) on startup"""
+        guild = None
+        if self.config.guild_id:
+            guild = discord.Object(id=self.config.guild_id)
+            logger.info(f"Guild ID: {self.config.guild_id}")
         await self.add_cog(General(self))
         await self.add_cog(Spreadsheet(self, self.config.spreadsheet_id))
-        await self.tree.sync()
+        await self.tree.sync(guild=guild)
         logger.info("Slash commands synced!")
 
     async def on_ready(self):

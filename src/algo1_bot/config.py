@@ -10,6 +10,7 @@ class Config:
 
     token: str
     spreadsheet_id: str
+    guild_id: str | None = None
     log_level: str | int = logging.INFO
 
 
@@ -26,13 +27,15 @@ def load_config() -> Config:
     load_dotenv()
 
     token = _getenv_or_raise("DISCORD_TOKEN")
-    log_level = os.getenv("LOG_LEVEL", logging.INFO)
     spreadsheet_id = _getenv_or_raise("SPREADSHEET_ID")
+    log_level = os.getenv("LOG_LEVEL", logging.INFO)
+    guild_id = os.getenv("DISCORD_GUILD_ID")
 
     config = Config(
         token=token,
-        log_level=log_level,
         spreadsheet_id=spreadsheet_id,
+        guild_id=guild_id,
+        log_level=log_level,
     )
 
     return config

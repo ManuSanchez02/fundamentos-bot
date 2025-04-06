@@ -17,6 +17,8 @@ Firstly, you need to clone the `.env.EXAMPLE` file and rename it to `.env`. This
 
 ```env
 DISCORD_TOKEN=<your_discord_token>
+SPREADSHEET_ID=<your_spreadsheet_id>
+DISCORD_GUILD_ID=<your_discord_guild_id>
 ```
 
 You can obtain a Discord token in the [Discord Developer Portal](https://discord.com/developers/applications), or asking for the token in Slack!

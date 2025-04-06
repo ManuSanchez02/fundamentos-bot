@@ -1,26 +1,39 @@
+from typing import override
 from discord import app_commands, Interaction
 import logging
 
 from algo1_bot.commands.base_cog import BaseCog
 from algo1_bot.gcp import SpreadsheetManager, TokenManager
+from algo1_bot.gcp.spreadsheet_manager import Schema
 
-RANGE = "Alumnos!A2:E"
+SPREADSHEET_NAME = "Alumnos"
+START_ROW = 2
+START_COL = "A"
+END_COL = "E"
+EMAIL_COL = "D"
 
 logger = logging.getLogger(__name__)
 
-# class StudentRecord:
-#     def __init__(self, student_id: int, email: str):
-#         self.student_id = student_id
-#         self.email = email
 
-#     def __repr__(self):
-#         return f"StudentRecord(student_id={self.student_id}, email='{self.email}')"
+class StudentSchema(Schema):
+    full_name: str
+    student_id: int
+    practice_class: str
+    email: str
 
-#     def to_dict(self):
-#         return {
-#             "student_id": self.student_id,
-#             "email": self.email,
-#         }
+    @override
+    @classmethod
+    def from_row(cls, row: list[str]):
+        """
+        Converts a row from the spreadsheet into a dictionary.
+        This method should be overridden in subclasses to provide custom mapping.
+        """
+        return cls(
+            full_name=row[0],
+            student_id=int(row[1]),
+            practice_class=row[2],
+            email=row[3],
+        )
 
 
 class Spreadsheet(BaseCog):
@@ -40,8 +53,33 @@ class Spreadsheet(BaseCog):
         self, interaction: Interaction, padron: int, email_actual: str, nuevo_email: str
     ):
         """Changes the email address corresponding to the given student id in the spreadsheet"""
+        if email_actual == nuevo_email:
+            await interaction.response.send_message(
+                "El nuevo email es el mismo que el actual", ephemeral=True
+            )
+            return
+
+        logger.info(f"Received email change request for {padron} to {nuevo_email}")
         await interaction.response.defer(thinking=True, ephemeral=True)
-        data = await self.spreadsheet_manager.get_data(RANGE)
-        _values = data.values
+        range = f"{SPREADSHEET_NAME}!{START_COL}{START_ROW}:{END_COL}"
+        data = await self.spreadsheet_manager.get_data(range, schema=StudentSchema)
+        students = data.values
+        found_index = None
+        for i, student in enumerate(students, START_ROW):
+            if student.student_id == padron and student.email == email_actual:
+                logger.debug(
+                    f"Found student {padron} with email {email_actual}, updating to {nuevo_email}"
+                )
+                found_index = i
+                break
+        else:
+            await interaction.followup.send(
+                f"No se encontró el padrón {padron} o el email actual no coincide"
+            )
+            return
+
+        cell_to_update = f"{EMAIL_COL}{found_index}:{EMAIL_COL}{found_index}"
+        logger.info(f"Updating cell {cell_to_update} with new email {nuevo_email}")
+        # Update the email in the spreadsheet
 
         await interaction.followup.send(f"Changed email for {padron} to {nuevo_email}")

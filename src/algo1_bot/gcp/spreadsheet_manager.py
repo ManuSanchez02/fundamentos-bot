@@ -5,7 +5,7 @@ For more details, see: https://developers.google.com/workspace/sheets/api/refere
 """
 
 from dataclasses import dataclass
-from typing import Self
+from typing import Generic, Self, Type, TypeVar
 import aiohttp
 import logging
 from abc import ABC
@@ -34,23 +34,28 @@ class Schema(ABC, BaseModel):
         raise NotImplementedError("Subclasses must implement this method.")
 
 
+T = TypeVar("T", bound=Schema)
+
+
 @dataclass
-class BaseSpreadsheetData:
+class _BaseSpreadsheetData:
     range: str
     major_dimension: str
 
 
 @dataclass
-class SpreadsheetData(BaseSpreadsheetData):
+class _RawSpreadsheetData(_BaseSpreadsheetData):
     values: list[list[str]]
 
 
 @dataclass
-class ParsedSpreadsheetData(BaseSpreadsheetData):
-    values: list[Schema]
+class ParsedSpreadsheetData(_BaseSpreadsheetData, Generic[T]):
+    values: list[T]
 
 
-async def _fetch_data(token: str, spreadsheet_id: str, range: str) -> SpreadsheetData:
+async def _fetch_data(
+    token: str, spreadsheet_id: str, range: str
+) -> _RawSpreadsheetData:
     url = f"{SPREADSHEETS_BASE_URL}/{spreadsheet_id}/values/{range}"
 
     headers = {"Authorization": f"Bearer {token}"}
@@ -61,7 +66,7 @@ async def _fetch_data(token: str, spreadsheet_id: str, range: str) -> Spreadshee
             logger.debug(f"Successfully fetched data: {response_data}")
 
     try:
-        return SpreadsheetData(
+        return _RawSpreadsheetData(
             range=response_data["range"],
             major_dimension=response_data["majorDimension"],
             values=response_data["values"],
@@ -78,22 +83,16 @@ class SpreadsheetManager:
         self.token_manager = token_manager
         self.spreadsheet_id = spreadsheet_id
 
-    async def get_data(
-        self, range: str, schema: Schema | None = None
-    ) -> SpreadsheetData | ParsedSpreadsheetData:
+    async def get_data(self, range: str, schema: Type[T]) -> ParsedSpreadsheetData[T]:
         logger.debug(
             f"Fetching data from range: {range} in spreadsheet: {self.spreadsheet_id}"
         )
         token = await self.token_manager.get_token()
         data = await _fetch_data(token, self.spreadsheet_id, range)
-        values = data.values
-        if not schema or len(values) == 0:
-            return data
-
-        parsed_values = [schema.from_row(row) for row in values]
+        values = [schema.from_row(row) for row in data.values]
 
         return ParsedSpreadsheetData(
             range=data.range,
             major_dimension=data.major_dimension,
-            values=parsed_values,
+            values=values,
         )
