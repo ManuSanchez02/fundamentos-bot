@@ -62,7 +62,7 @@ class Spreadsheet(BaseCog):
         logger.info(f"Received email change request for {padron} to {nuevo_email}")
         await interaction.response.defer(thinking=True, ephemeral=True)
         range = f"{SPREADSHEET_NAME}!{START_COL}{START_ROW}:{END_COL}"
-        data = await self.spreadsheet_manager.get_data(range, schema=StudentSchema)
+        data = await self.spreadsheet_manager.get_range(range, schema=StudentSchema)
         students = data.values
         found_index = None
         for i, student in enumerate(students, START_ROW):

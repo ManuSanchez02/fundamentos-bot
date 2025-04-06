@@ -83,7 +83,7 @@ class SpreadsheetManager:
         self.token_manager = token_manager
         self.spreadsheet_id = spreadsheet_id
 
-    async def get_data(self, range: str, schema: Type[T]) -> SpreadsheetData[T]:
+    async def get_range(self, range: str, schema: Type[T]) -> SpreadsheetData[T]:
         logger.debug(
             f"Fetching data from range: {range} in spreadsheet: {self.spreadsheet_id}"
         )
