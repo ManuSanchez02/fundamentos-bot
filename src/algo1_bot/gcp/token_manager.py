@@ -5,6 +5,7 @@ For more details, see: https://developers.google.com/identity/protocols/oauth2/s
 
 import asyncio
 from dataclasses import dataclass
+import logging
 import jwt
 from datetime import datetime, timedelta
 import aiohttp
@@ -15,6 +16,8 @@ SCOPE = "https://www.googleapis.com/auth/spreadsheets"
 ACCESS_TOKEN_DURATION = 60 * 60  # 1 hour
 JWT_ENCRYPTION_ALGORITHM = "RS256"
 GCP_CREDENTIALS_FILENAME = "gcp_credentials.json"
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -38,9 +41,11 @@ async def _async_get_token(encoded_jwt: str) -> TokenResponse:
     try:
         token = token_response["access_token"]
         expires_in = int(token_response["expires_in"])
-    except KeyError:
+    except KeyError as e:
+        logger.error("Missing key in token response: %s", e)
         raise KeyError("Invalid token response. Please check your credentials.")
     except ValueError:
+        logger.error("Invalid token response: %s", token_response)
         raise ValueError("Invalid token response. Could not calculate expiration time.")
 
     return TokenResponse(access_token=token, expires_in=expires_in)
@@ -52,10 +57,12 @@ def _load_credentials(credentials_filename: str) -> tuple[str, str]:
             data = json.load(f)
 
     except FileNotFoundError:
+        logger.error("gcp_credentials.json file not found.")
         raise FileNotFoundError(
             "gcp_credentials.json file not found. Please provide the file."
         )
     except json.JSONDecodeError:
+        logger.error("Invalid JSON format in gcp_credentials.json")
         raise ValueError(
             "Invalid JSON format in gcp_credentials.json. Please check the file."
         )
@@ -64,6 +71,7 @@ def _load_credentials(credentials_filename: str) -> tuple[str, str]:
         private_key = data["private_key"]
         issuer = data["client_email"]
     except KeyError as e:
+        logger.error("Missing key in gcp_credentials.json: %s", e)
         raise KeyError(
             f"Missing key in gcp_credentials.json: {e}. Please check the file."
         )
@@ -114,9 +122,12 @@ class TokenManager:
 
     async def get_token(self) -> str:
         if self._should_refresh_token():
+            logger.debug("Token expired or not available. Refreshing token.")
             await self._refresh_token()
+            logger.debug("Token refreshed successfully.")
 
         if self._token is None:
+            logger.error("Token is None after refresh.")
             raise ValueError("Failed to obtain access token.")
 
         return self._token

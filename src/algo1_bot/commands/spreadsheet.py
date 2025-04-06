@@ -1,10 +1,12 @@
 from discord import app_commands, Interaction
+import logging
 
 from algo1_bot.commands.base_cog import BaseCog
 from algo1_bot.gcp import SpreadsheetManager, TokenManager
 
 RANGE = "Alumnos!A2:E"
 
+logger = logging.getLogger(__name__)
 
 # class StudentRecord:
 #     def __init__(self, student_id: int, email: str):
