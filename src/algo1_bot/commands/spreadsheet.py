@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class StudentSchema(Schema):
+    """Schema for the student data in the spreadsheet."""
+
     full_name: str
     student_id: int
     practice_class: str
@@ -26,7 +28,12 @@ class StudentSchema(Schema):
     def from_row(cls, row: list[str]):
         """
         Converts a row from the spreadsheet into a dictionary.
-        This method should be overridden in subclasses to provide custom mapping.
+
+        Args:
+            row: A list of strings representing a row in the spreadsheet.
+
+        Returns:
+            - student: An instance of StudentSchema with the data from the row.
         """
         return cls(
             full_name=row[0],
@@ -37,7 +44,21 @@ class StudentSchema(Schema):
 
 
 class Spreadsheet(BaseCog):
+    """Spreadsheet commands for the bot.
+    This class contains commands that interact with the Google Sheets API.
+
+    Attributes:
+        bot: The bot instance.
+        spreadsheet_manager: The manager for handling spreadsheet operations.
+    """
+
     def __init__(self, bot, spreadsheet_id: str):
+        """Initialize the Spreadsheet cog.
+
+        Args:
+            bot: The bot instance.
+            spreadsheet_id: The ID of the Google Spreadsheet to interact with.
+        """
         super().__init__(bot)
         token_manager = TokenManager()
         self.spreadsheet_manager = SpreadsheetManager(

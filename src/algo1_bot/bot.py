@@ -1,3 +1,6 @@
+"""Bot module for the Discord bot.
+This module contains the MyBot class, which is a subclass of discord.ext.commands.Bot."""
+
 from discord import Intents, Object
 from discord.ext import commands
 
@@ -13,8 +16,21 @@ BOT_PREFIX = "!"
 logger = logging.getLogger(__name__)
 
 
-class MyBot(commands.Bot):
+class FundamentosBot(commands.Bot):
+    """Discord bot class that handles commands and events.
+    This class is a subclass of discord.ext.commands.Bot and is responsible for
+    setting up the bot, loading cogs, and handling events.
+
+    Attributes:
+        config: Configuration object containing bot settings.
+    """
+
     def __init__(self, config: Config):
+        """Initialize the bot with the given configuration.
+
+        Args:
+            config: Configuration object containing bot settings.
+        """
         super().__init__(command_prefix=BOT_PREFIX, intents=Intents.default())
         self.config = config
 
@@ -35,4 +51,6 @@ class MyBot(commands.Bot):
         logger.info(f"Logged in as {self.user}")
 
     async def process_commands(self, _message):
+        """Process messages that match the command prefix."""
+        # This method is intentionally left blank in order to only process slash commands.
         pass
