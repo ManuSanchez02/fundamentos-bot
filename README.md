@@ -18,10 +18,16 @@ Firstly, you need to clone the `.env.EXAMPLE` file and rename it to `.env`. This
 ```env
 DISCORD_TOKEN=<your_discord_token>
 SPREADSHEET_ID=<your_spreadsheet_id>
-DISCORD_GUILD_ID=<your_discord_guild_id>
 ```
 
 You can obtain a Discord token in the [Discord Developer Portal](https://discord.com/developers/applications), or asking for the token in Slack!
+
+The rest of the environment variables are optional and can be left as is. Here is a list of the optional environment variables:
+
+```env
+DISCORD_GUILD_ID=<your_discord_guild_id> # The ID of the Discord server (guild) where the bot will be running, mainly used for dev purposes to register and refresh the slash commands.
+LOG_LEVEL=<log_level> # The log level for the bot. Can be one of: DEBUG, INFO, WARNING, ERROR, CRITICAL. Default is INFO.
+```
 
 In order to use the Google Cloud Platform APIs, you will need to set up your credentials. To do so, you can either create a service account in the Google Cloud Console and download the JSON key file, or ask for the credentials through Slack. Once you have the key file, you should rename it to `gcp_credentials.json` and place it in the root directory of the project. The bot will automatically load the credentials from this file when it starts up.
 
